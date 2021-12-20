@@ -110,7 +110,7 @@ export default function Home() {
 
       await celo.enable();
 
-      kit = newKitFromWeb3(web3);
+      const kit = newKitFromWeb3(web3);
 
       const accounts = await kit.web3.eth.getAccounts();
 
