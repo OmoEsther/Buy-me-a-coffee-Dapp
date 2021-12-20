@@ -1,3 +1,32 @@
+# Buy me a coffee Dapp
+
+A Mini Buymeacoffee dAPP Using Solidity, Celo Smart Contract, ReactJs, and tailwind CSS. It'll be a platform where anyone on the internet can learn a little about us and send us money to purchase coffee + a note, with the information being kept on the celo blockchain via an smart contract.
+
+It is built using the next.js framework.
+
+# For Developers
+
+### Install
+
+```
+
+npm install
+
+```
+
+### Start
+
+```
+
+npm run dev
+
+```
+
+# Usage
+1. Install the [CeloExtensionWallet](https://chrome.google.com/webstore/detail/celoextensionwallet/kkilomkmpmkbdnfelcpgckmpcaemjcdh?hl=en) from the google chrome store.
+2. Create a wallet.
+3. Go to [https://celo.org/developers/faucet](https://celo.org/developers/faucet) and get tokens for the alfajores testnet.
+4. Switch to the alfajores testnet in the CeloExtensionWallet.
 # Next.js + Tailwind CSS Example
 
 This example shows how to use [Tailwind CSS](https://tailwindcss.com/) [(v3.0)](https://tailwindcss.com/blog/tailwindcss-v3) with Next.js. It follows the steps outlined in the official [Tailwind docs](https://tailwindcss.com/docs/guides/nextjs).
