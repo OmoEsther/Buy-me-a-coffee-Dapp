@@ -7,16 +7,9 @@ import "react-toastify/dist/ReactToastify.css";
 import Head from "next/head";
 import coffeePortalAbi from "../contracts/CoffeePortal.abi.json";
 import erc20Abi from "../contracts/IERC20.abi.json";
+import { contractAddress, cUSDContractAddress } from "../utils/constants";
 
 export default function Home() {
-  /**
-   * Create a variable here that holds the contract address after you deploy!
-   */
-  const contractAddress = "0x1063F3412a35976F4ddE9b6c2a5777BA190C5439";
-  const cUSDContractAddress = "0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1";
-  /*
-   * Just a state variable we use to store our user's public wallet.
-   */
   const [currentAccount, setCurrentAccount] = useState("");
 
   const [message, setMessage] = useState("");
@@ -28,14 +21,12 @@ export default function Home() {
    */
   const [allCoffee, setAllCoffee] = useState([]);
 
-
   /*
    * This runs our function when the page loads.
    */
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
-
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -45,7 +36,7 @@ export default function Home() {
       const { celo } = window;
 
       const web3 = new Web3(celo);
-  
+
       const kit = newKitFromWeb3(web3);
 
       const accounts = await kit.web3.eth.getAccounts();
@@ -122,25 +113,29 @@ export default function Home() {
     }
   };
 
-   /*
+  /*
    * Create a method that gets all coffee from your contract
    */
-   const getAllCoffee = async () => {
+  const getAllCoffee = async () => {
     try {
       const { celo } = window;
 
       if (celo) {
-
         const web3 = new Web3(celo);
 
         const kit = newKitFromWeb3(web3);
 
-        const coffeePortalContract = new kit.web3.eth.Contract(coffeePortalAbi, contractAddress);
-  
+        const coffeePortalContract = new kit.web3.eth.Contract(
+          coffeePortalAbi,
+          contractAddress
+        );
+
         /*
          * Call the getAllCoffee method from your Smart Contract
          */
-        const coffees = await coffeePortalContract.methods.getAllCoffee().call();
+        const coffees = await coffeePortalContract.methods
+          .getAllCoffee()
+          .call();
         /*
          * We only need address, timestamp, name, and message in our UI so let's
          * pick those out
@@ -158,43 +153,45 @@ export default function Home() {
          * Store our data in React State
          */
         setAllCoffee(coffeeCleaned);
-
-      }else{
+      } else {
         console.log("Celo object doesn't exist!");
       }
-        
     } catch (error) {
       console.log(error);
     }
   };
 
-
   async function approve(_donation, kit) {
-    
-    const cUSDContract = new kit.web3.eth.Contract(erc20Abi, cUSDContractAddress)
+    const cUSDContract = new kit.web3.eth.Contract(
+      erc20Abi,
+      cUSDContractAddress
+    );
     const result = await cUSDContract.methods
       .approve(contractAddress, _donation)
-      .send({ from: currentAccount })
-    return result
+      .send({ from: currentAccount });
+    return result;
   }
 
   const buyCoffee = async () => {
     try {
-
       const { celo } = window;
-      
+
       if (celo) {
         const web3 = new Web3(celo);
-        
+
         const kit = newKitFromWeb3(web3);
 
-        const coffeePortalContract = new kit.web3.eth.Contract(coffeePortalAbi, contractAddress);
+        const coffeePortalContract = new kit.web3.eth.Contract(
+          coffeePortalAbi,
+          contractAddress
+        );
 
         let count = await coffeePortalContract.methods.getTotalCoffee().call();
 
-        let coffeePrice = await coffeePortalContract.methods.getCoffeeAmount().call()
+        let coffeePrice = await coffeePortalContract.methods
+          .getCoffeeAmount()
+          .call();
 
-        console.log("Retrieved total coffee count...", count);
 
         /*
          * Execute the actual coffee gift from your smart contract
@@ -210,7 +207,7 @@ export default function Home() {
         });
 
         try {
-          await approve(coffeePrice, kit)
+          await approve(coffeePrice, kit);
         } catch (error) {
           toast.error(`${error.message}`, {
             position: "top-right",
@@ -223,7 +220,7 @@ export default function Home() {
           });
         }
 
-        try {                  
+        try {
           toast.info("Sending Fund for coffee...", {
             position: "top-left",
             autoClose: 18050,
@@ -234,12 +231,12 @@ export default function Home() {
             progress: undefined,
           });
 
-          const coffeeTxn = await coffeePortalContract.methods.buyCoffee(
-            message ? message : "Enjoy Your Coffee",
-            name ? name : "Anonymous",
-          ).send({ from: currentAccount });
-
-          console.log("Mining...", coffeeTxn.hash);
+          const coffeeTxn = await coffeePortalContract.methods
+            .buyCoffee(
+              message ? message : "Enjoy Your Coffee",
+              name ? name : "Anonymous"
+            )
+            .send({ from: currentAccount });
 
         } catch (error) {
           toast.error(`${error.message}`, {
@@ -251,15 +248,13 @@ export default function Home() {
             draggable: true,
             progress: undefined,
           });
-          
         }
 
         count = await coffeePortalContract.methods.getTotalCoffee().call();
 
-        console.log("Retrieved total coffee count...", count);
 
         setMessage("");
-        
+
         setName("");
 
         toast.success("Coffee Purchased!", {
@@ -270,11 +265,10 @@ export default function Home() {
           pauseOnHover: true,
           draggable: true,
           progress: undefined,
-        }); 
+        });
 
         getAllCoffee();
-
-      }else{
+      } else {
         console.log("Celo object doesn't exist!");
       }
     } catch (error) {
@@ -291,7 +285,6 @@ export default function Home() {
     }
   };
 
- 
   const handleOnMessageChange = (event) => {
     const { value } = event.target;
     setMessage(value);
@@ -369,8 +362,7 @@ export default function Home() {
         ) : (
           <div>
             <p className="text-2xl text-blue-600 mb-6">
-              Switch your wallet to Alfajores Testnet to test this
-              application.
+              Switch your wallet to Alfajores Testnet to test this application.
             </p>
             <button
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 rounded-full mt-3"

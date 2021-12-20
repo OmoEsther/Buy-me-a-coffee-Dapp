@@ -42,6 +42,10 @@ contract CoffeePortal {
 
     address internal cUsdTokenAddress = 0x874069Fa1Eb16D44d622F2e0Ca25eeA172369bC1;
 
+    modifier isOwner(){
+        require(msg.sender == owner, "Only the owner can call this function");
+        _;
+    }
 
     constructor(uint256 _coffeePrice) payable {
         owner = payable(msg.sender);
@@ -77,6 +81,12 @@ contract CoffeePortal {
     // Get Coffee Amount
     function getCoffeeAmount() public view returns (uint256) {
         return coffeePrice;
+    }
+
+    function updateCoffeeAmount(uint _coffeePrice) public isOwner {
+        require(_coffeePrice > 0, "Please enter a valid price");
+
+        coffeePrice = _coffeePrice * (10**18);
     }
 
     function buyCoffee(
